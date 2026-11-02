@@ -2,6 +2,7 @@ package com.xtacked.launcher
 
 import android.content.Context
 import androidx.room.Room
+import com.xtacked.launcher.data.NetworkMonitor
 import com.xtacked.launcher.data.local.UserPreferences
 import com.xtacked.launcher.data.local.XtackedDatabase
 import com.xtacked.launcher.data.remote.ContentApi
@@ -22,6 +23,8 @@ class AppContainer(context: Context) {
     ).fallbackToDestructiveMigration().build()
 
     val userPreferences: UserPreferences = UserPreferences(context.applicationContext)
+
+    val networkMonitor: NetworkMonitor = NetworkMonitor(context.applicationContext)
 
     val contentApi: ContentApi = MockContentSource()
 

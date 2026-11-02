@@ -40,4 +40,8 @@ class MyListRepository(private val dao: MyListDao) {
     suspend fun remove(id: String) {
         dao.deleteById(id)
     }
+
+    suspend fun clearAll() {
+        dao.clear()
+    }
 }

@@ -3,46 +3,60 @@ package com.xtacked.launcher
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.spacedBy
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text as TvText
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.xtacked.launcher.navigation.Routes
+import com.xtacked.launcher.ui.details.DetailsScreen
+import com.xtacked.launcher.ui.home.HomeScreen
+import com.xtacked.launcher.ui.mylist.MyListScreen
+import com.xtacked.launcher.ui.theme.XtackedBg
+import com.xtacked.launcher.ui.theme.XtackedTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val container = (application as XtackedApp).container
         setContent {
-            MaterialTheme {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xFF0A0A0F)),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+            XtackedTheme {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Routes.HOME,
+                    modifier = Modifier.fillMaxSize().background(XtackedBg)
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher),
-                        contentDescription = null,
-                        modifier = Modifier.size(96.dp)
-                    )
-                    TvText(
-                        text = "Xtacked Launcher",
-                        color = Color(0xFFF5F5F7)
-                    )
-                    TvText(
-                        text = "booting...",
-                        color = Color(0xFFA0A0AB)
-                    )
+                    composable(Routes.HOME) {
+                        HomeScreen(
+                            container = container,
+                            onOpenDetails = { id -> navController.navigate(Routes.details(id)) },
+                            onOpenMyList = { navController.navigate(Routes.MY_LIST) }
+                        )
+                    }
+                    composable(Routes.MY_LIST) {
+                        MyListScreen(
+                            container = container,
+                            onOpenDetails = { id -> navController.navigate(Routes.details(id)) },
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(
+                        route = Routes.DETAILS_ROUTE,
+                        arguments = listOf(navArgument(Routes.ARG_CONTENT_ID) {
+                            type = NavType.StringType
+                        })
+                    ) { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString(Routes.ARG_CONTENT_ID).orEmpty()
+                        DetailsScreen(
+                            container = container,
+                            contentId = id,
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
                 }
             }
         }

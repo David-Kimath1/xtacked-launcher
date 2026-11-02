@@ -28,4 +28,7 @@ interface MyListDao {
 
     @Query("DELETE FROM my_list WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM my_list")
+    suspend fun clear()
 }

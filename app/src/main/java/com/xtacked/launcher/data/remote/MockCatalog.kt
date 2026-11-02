@@ -12,8 +12,17 @@ import com.xtacked.launcher.data.model.HomeFeed
  */
 object MockCatalog {
 
-    private fun poster(seed: String) = "https://picsum.photos/seed/$seed/500/750"
-    private fun backdrop(seed: String) = "https://picsum.photos/seed/$seed-b/1280/720"
+    // Bundled vector artwork. Works completely offline from first launch,
+    // and Coil will additionally cache these once loaded.
+    private fun poster(seed: String): String {
+        val n = (seed.hashCode() and 0x7FFFFFFF) % 12 + 1
+        return "android.resource://com.xtacked.launcher/drawable/poster_%02d".format(n)
+    }
+
+    private fun backdrop(seed: String): String {
+        val n = (seed.hashCode() and 0x7FFFFFFF) % 6 + 1
+        return "android.resource://com.xtacked.launcher/drawable/backdrop_%02d".format(n)
+    }
     private val GENERIC_VIEWING_OPTIONS = listOf("Stream", "Rent")
 
     private fun movie(
